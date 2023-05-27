@@ -16,7 +16,6 @@ export default function NavBar({ userId }: { userId: string }) {
                         key={todoListItem.id}
                         todoListId={todoListItem.id}
                         imageIcon={todoListIcon}
-                        isSelected={index === 0 ? true : false}
                         nameTodoList={todoListItem.name}
                     />
                 ))}

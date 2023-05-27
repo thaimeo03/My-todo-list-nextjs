@@ -10,18 +10,19 @@ import {
 } from "../../../components/ui/dialog"
 import { BsPlus } from "react-icons/bs"
 import { handleCreateTodoList } from "@/app/utils/todoListAction"
-import useSWR from "swr"
+import useSWR, { mutate } from "swr"
 import { fetcher } from "@/app/utils/fetcher"
 import { TodoList } from "@prisma/client"
 import { useToast } from "@/app/components/ui/use-toast"
 
 export default function CollectionSide({ userId }: { userId: string }) {
-    const { data }: { data: TodoList[] } = useSWR(`/api/todoLists/${userId}`, fetcher, { refreshInterval: 150 })
+    const { data }: { data: TodoList[] } = useSWR(`/api/todoLists/${userId}`, fetcher)
     const { toast } = useToast()
 
     async function handleAction(formData: FormData) {
         try {
             await handleCreateTodoList(formData, userId)
+            mutate(`/api/todoLists/${userId}`)
             toast({
                 title: "Successfully",
             })

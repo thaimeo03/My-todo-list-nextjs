@@ -4,7 +4,7 @@ import { TodoList } from "@prisma/client"
 import Link from "next/link"
 import { ImBin2 } from "react-icons/im"
 import axios from "axios"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import {
     Popover,
     PopoverContent,
@@ -16,6 +16,8 @@ import { handleUpdateTodoList } from "@/app/utils/todoListAction"
 export default function TodoListItem({ todoList }: { todoList: TodoList }) {
     const [isHidden, setIsHidden] = useState(false)
     const [formUpdate, setFormUpdate] = useState({ name: todoList.name, description: todoList.description });
+    const nameRef = useRef<HTMLAnchorElement>(null);
+    const descriptionRef = useRef<HTMLParagraphElement>(null);
 
     const handleDeleteTodoList = async () => {
         try {
@@ -27,9 +29,10 @@ export default function TodoListItem({ todoList }: { todoList: TodoList }) {
     }
 
     const handleAction = async (formData: FormData) => {
-        todoList.name = formData.get("name") as string
-        todoList.description = formData.get("description") as string
-
+        if (nameRef.current && descriptionRef.current) {
+            nameRef.current.textContent = formData.get("name") as string
+            descriptionRef.current.textContent = formData.get("description") as string
+        }
         try {
             await handleUpdateTodoList(formData, todoList.id);
         } catch (error: any) {
@@ -41,7 +44,7 @@ export default function TodoListItem({ todoList }: { todoList: TodoList }) {
         <div className={`w-56 h-64 p-5 rounded-xl bg-[#292935] hover:-translate-y-1 transition ${isHidden ? "hidden" : ""}`}>
             <div className="flex justify-between items-center">
                 <h3 className="text-[#fc76a1] capitalize font-medium line-clamp-1 hover:text-[#e7497b]">
-                    <Link href={`/?todolist_id=${todoList.id}`}>{todoList.name}</Link>
+                    <Link href={`/?todolist_id=${todoList.id}`} ref={nameRef}>{todoList.name}</Link>
                 </h3>
                 <div className="flex space-x-2 items-center" title="Edit todo list">
                     <div className="hover:opacity-80 cursor-pointer flex items-center">
@@ -78,7 +81,6 @@ export default function TodoListItem({ todoList }: { todoList: TodoList }) {
                                     <button
                                         className="capitalize bg-[#fc76a1] py-1 px-4 text-white rounded mt-2 hover:bg-[#fd6693] flex items-center"
                                         type="submit"
-                                        onClick={() => { }}
                                     >
                                         Change
                                     </button>
@@ -93,7 +95,7 @@ export default function TodoListItem({ todoList }: { todoList: TodoList }) {
                 </div>
             </div>
             <div className="mt-4 line-clamp-6">
-                <p className="text-white">{todoList.description}</p>
+                <p className="text-white" ref={descriptionRef}>{todoList.description}</p>
             </div>
         </div>
     )

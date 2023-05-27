@@ -8,7 +8,7 @@ datasource db {
 }
 
 model TodoList {
-  id           String      @id @default(uuid())
+  id           String   @id @default(uuid())
   name         String
   description  String?
   created_date DateTime @default(now())
@@ -30,12 +30,12 @@ model User {
 }
 
 model Work {
-  id           String      @id @default(uuid())
+  id           String    @id @default(uuid())
   name         String
-  detail       String?
-  status       Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  finishDate   DateTime?
+  status       Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   todo_list_id String
-  TodoList     TodoList @relation(fields: [todo_list_id], references: [id])
+  TodoList     TodoList  @relation(fields: [todo_list_id], references: [id])
 }

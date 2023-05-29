@@ -1,7 +1,7 @@
 "use client"
+import AddTodoListForm from "./AddTodoListForm"
 import TodoCard from "./TodoCard"
 import { useSearchParams } from 'next/navigation'
-
 
 export default function TodoListSide() {
     const searchParams = useSearchParams()
@@ -32,21 +32,7 @@ export default function TodoListSide() {
                             </div>
                         </div>
 
-                        <div className="mt-9 p-3 border border-gray-700 rounded-2xl flex items-center">
-                            <button
-                                type="button"
-                                className="bg-[#fc76a1] w-7 h-7 grid place-items-center rounded-xl cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed font-normal"
-                                disabled={false}
-                            >
-                                +
-                            </button>
-                            <input
-                                type="text"
-                                className="ml-3 text-white placeholder:opacity-60 text-sm w-full outline-none bg-transparent"
-                                placeholder="Add a task"
-                                name="work"
-                            />
-                        </div>
+                        <AddTodoListForm />
 
                         <div className="mt-9">
                             <p className="capitalize">Task list</p>

@@ -42,8 +42,8 @@ function Calendar({
           "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
         ),
         day_selected:
-          "bg-white text-[#21212b] hover:bg-white hover:text-primary-foreground focus:bg-white focus:text-[#21212b]",
-        day_today: "border text-white",
+          "bg-white text-[#21212b] hover:bg-white hover:text-[#21212b] focus:bg-white focus:text-[#21212b]",
+        day_today: "text-white aria-selected:text-[#21212b]",
         day_outside: "text-muted-foreground opacity-50",
         day_disabled: "text-muted-foreground opacity-50",
         day_range_middle:

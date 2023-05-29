@@ -3,7 +3,7 @@ import Link from "next/link"
 export default function NavPage() {
     return (
         <div className="flex space-x-8 text-secondary col-span-5">
-            <Link href="/" className="flex space-x-2 items-center">
+            <Link href="/" className="flex space-x-2 items-center hover:opacity-80">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"

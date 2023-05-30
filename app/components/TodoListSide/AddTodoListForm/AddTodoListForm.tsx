@@ -1,3 +1,5 @@
+"use client"
+import { Calendar } from "../../ui/calendar"
 import {
     Dialog,
     DialogContent,
@@ -10,12 +12,17 @@ import { useState } from "react"
 
 export default function AddTodoListForm() {
     const [disable, setDisable] = useState(true)
+    const [date, setDate] = useState<Date | undefined>(new Date())
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.value.trim().length !== 0) {
             setDisable(false)
         }
         else setDisable(true)
+    }
+
+    const handleAddTodo = () => {
+        console.log(date?.toISOString());
     }
 
     return (
@@ -41,10 +48,16 @@ export default function AddTodoListForm() {
             <DialogContent className="bg-[#181820]">
                 <DialogHeader className="text-white">
                     <DialogTitle className="text-[#fc76a1] text-2xl">
-                        New todo list
+                        Add your deadline (optional)
                     </DialogTitle>
                     <DialogDescription className="text-white">
-                        A new plan, a new success. Good luck with your work
+                        <Calendar
+                            mode="single"
+                            selected={date}
+                            onSelect={setDate}
+                            className="rounded-md border w-fit mt-3"
+                        />
+                        <button type="button" className="px-3 py-1 border border-[#fc76a1] rounded hover:bg-[#fc76a1] transition mt-3" onClick={handleAddTodo}>Create</button>
                     </DialogDescription>
                 </DialogHeader>
             </DialogContent>

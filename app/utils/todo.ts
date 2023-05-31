@@ -10,3 +10,16 @@ export function sortByStatus(todoList: any) {
     const newTodoList = [...todoListStatusFalse, ...todoListStatusTrue]
     return newTodoList
 }
+
+export function deadline(finishDate: Date | null) {
+    const currentDate = new Date();
+    const completionDate = new Date(finishDate as Date);    
+
+    const oneDay: number = 24 * 60 * 60 * 1000;
+
+    const deadline: number = Math.round((completionDate.getTime() - currentDate.getTime()) / oneDay);
+
+    if(deadline < 0) return 0
+
+    return deadline + 1
+}

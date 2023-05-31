@@ -33,7 +33,7 @@ export default function AddTodoListForm({ todoListId }: Props) {
     const handleAddTodo = async () => {
         try {
             const todo = await axios.post(`/api/todo/${todoListId}`, {
-                finishDate: date?.toISOString(),
+                finishDate: date,
                 name
             })
             setName("")

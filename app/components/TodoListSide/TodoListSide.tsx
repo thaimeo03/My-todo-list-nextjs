@@ -50,6 +50,7 @@ export default function TodoListSide() {
                                             workName={todo.name}
                                             todoId={todo.id}
                                             status={todo.status}
+                                            finishDate={todo.finishDate as Date}
                                         />
                                     ))
                                 }

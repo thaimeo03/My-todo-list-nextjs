@@ -71,3 +71,31 @@ export async function DELETE(req: Request, {params} : {params: {id: string}}) {
         return new Response("Internal Server Error", {status: 500})
     }
 }
+
+export async function PUT(req: Request, {params} : {params: {id: string}}) {
+    if(req.method !== "PUT") {
+        return new Response("Endpoint unknown", {status: 405})
+    }
+
+    try {
+        const {name, finishDate} = await req.json()
+    
+        const todo = await prisma.work.update({
+            where: {
+                id: params.id
+            },
+            data: {
+                name,
+                finishDate
+            }
+        })
+    
+        if(!todo) {
+            return new Response("Todo list not found", {status: 404})
+        }
+    
+        return new Response(JSON.stringify(todo))
+    } catch (error) {
+        return new Response("Internal Server Error", {status: 500})
+    }
+}

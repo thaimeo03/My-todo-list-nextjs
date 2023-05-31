@@ -1,7 +1,7 @@
 "use client"
 import { ImBin2 } from "react-icons/im"
 import { AiFillEdit } from "react-icons/ai"
-import { BsThreeDots, BsCalendarDate } from "react-icons/bs"
+import { BsThreeDots } from "react-icons/bs"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -9,9 +9,17 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "../../ui/dropdown-menu"
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "../../ui/sheet"
+
 import { Calendar } from "../../ui/calendar"
 import { useCallback, useState } from "react"
-import { Popover, PopoverTrigger } from "../../ui/popover"
 import axios from "axios"
 import { mutate } from "swr"
 
@@ -22,8 +30,10 @@ interface Props {
 }
 
 export default function TodoCard({ workName, todoId, status }: Props) {
+    const [name, setName] = useState(workName)
     const [isChecked, setIsChecked] = useState(status)
     const [isHidden, setIsHidden] = useState(false)
+    const [date, setDate] = useState<Date | undefined>(undefined)
 
     const handleToggle = useCallback(async () => {
         setIsChecked(!isChecked)
@@ -44,6 +54,14 @@ export default function TodoCard({ workName, todoId, status }: Props) {
         } catch (error: any) {
             console.log(error.message);
         }
+    }
+
+    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setName(e.target.value)
+    }
+
+    const handleSaveChange = () => {
+        console.log(name, date?.toISOString());
     }
 
     return (
@@ -73,21 +91,43 @@ export default function TodoCard({ workName, todoId, status }: Props) {
                 <p className="max-w-[95%]">{workName}</p>
             </div>
             <div className="flex space-x-2">
+                <Sheet>
+                    <SheetTrigger>
+                        <AiFillEdit size={18} cursor="pointer" color="white" />
+                    </SheetTrigger>
+                    <SheetContent className="bg-[#21212b] border-black" size={"sm"}>
+                        <SheetHeader>
+                            <SheetTitle className="text-[#fc76a1]">Edit your todo</SheetTitle>
+                        </SheetHeader>
+                        <div className="mt-8">
+                            <div className="flex space-x-3 items-center">
+                                <label htmlFor="name" className="text-white text-sm">Name</label>
+                                <input type="text" placeholder="Todo name" name="name" className="bg-transparent text-white text-sm border border-white placeholder:opacity-50 px-2 py-1 placeholder:text-sm" value={name} onChange={handleChangeName} />
+                            </div>
+
+                            <div className="mt-6">
+                                <p className="text-white">Your deadline</p>
+                                <Calendar
+                                    mode="single"
+                                    selected={date}
+                                    onSelect={setDate}
+                                    className="rounded-md border w-fit mt-3 text-white"
+                                />
+                                <button type="button" className="px-3 py-1 text-white text-sm border border-[#fc76a1] rounded hover:bg-[#fc76a1] transition mt-3" onClick={handleSaveChange}>Save change</button>
+
+                            </div>
+                        </div>
+                    </SheetContent>
+                </Sheet>
                 <DropdownMenu>
                     <DropdownMenuTrigger>
                         <BsThreeDots />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="bg-[#21212b]">
-                        <DropdownMenuItem className="flex items-center space-x-2 hover:bg-[#272732]">
-                            <AiFillEdit size={22} cursor="pointer" color="white" />
-                            <p className="cursor-pointer text-white w-full">Edit</p>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-gray-500" />
                         <DropdownMenuItem className="flex items-center space-x-3 hover:bg-[#272732]" onClick={handleDeleteTodo}>
                             <ImBin2 size={16} cursor="pointer" color="white" />
                             <p className="cursor-pointer text-white w-full">Delete</p>
                         </DropdownMenuItem>
-
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>

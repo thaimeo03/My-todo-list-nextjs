@@ -11,23 +11,43 @@ import {
 } from "../../ui/dropdown-menu"
 import { Calendar } from "../../ui/calendar"
 import { useCallback, useState } from "react"
-import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover"
+import { Popover, PopoverTrigger } from "../../ui/popover"
+import axios from "axios"
+import { mutate } from "swr"
 
 interface Props {
     workName: string;
+    todoId: string;
+    status: boolean
 }
 
-export default function TodoCard({ workName }: Props) {
-    const [isChecked, setIsChecked] = useState(false)
-    const [date, setDate] = useState<Date | undefined>(new Date())
-    console.log(date?.toISOString())
+export default function TodoCard({ workName, todoId, status }: Props) {
+    const [isChecked, setIsChecked] = useState(status)
+    const [isHidden, setIsHidden] = useState(false)
 
-    const handleToggle = useCallback(() => {
+    const handleToggle = useCallback(async () => {
         setIsChecked(!isChecked)
-    }, [isChecked])
+        try {
+            await axios.put(`/api/status/${todoId}`, {
+                status: !isChecked
+            })
+            mutate(`/api/todo/${todoId}`)
+        } catch (error: any) {
+            console.log(error.message);
+        }
+    }, [isChecked, todoId])
+
+    const handleDeleteTodo = async () => {
+        try {
+            setIsHidden(true)
+            await axios.delete(`/api/todo/${todoId}`)
+        } catch (error: any) {
+            console.log(error.message);
+        }
+    }
 
     return (
-        <li className={`p-3 ${isChecked ? "bg-[#4821d4]" : "bg-[#21212b] "} rounded-xl w-full flex mt-4 justify-between`}>
+        <li className={`p-3 ${isChecked ? "bg-[#4821d4]" : "bg-[#21212b] "} ${isHidden ? "hidden" : ""} rounded-xl w-full flex mt-4 justify-between`}>
             <div className="flex space-x-3">
                 <div>
                     {isChecked ? (
@@ -53,19 +73,6 @@ export default function TodoCard({ workName }: Props) {
                 <p className="max-w-[95%]">{workName}</p>
             </div>
             <div className="flex space-x-2">
-                <Popover>
-                    <PopoverTrigger>
-                        <BsCalendarDate />
-                    </PopoverTrigger>
-                    <PopoverContent>
-                        <Calendar
-                            mode="single"
-                            selected={date}
-                            onSelect={setDate}
-                            className="rounded-md"
-                        />
-                    </PopoverContent>
-                </Popover>
                 <DropdownMenu>
                     <DropdownMenuTrigger>
                         <BsThreeDots />
@@ -76,7 +83,7 @@ export default function TodoCard({ workName }: Props) {
                             <p className="cursor-pointer text-white w-full">Edit</p>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-gray-500" />
-                        <DropdownMenuItem className="flex items-center space-x-3 hover:bg-[#272732]">
+                        <DropdownMenuItem className="flex items-center space-x-3 hover:bg-[#272732]" onClick={handleDeleteTodo}>
                             <ImBin2 size={16} cursor="pointer" color="white" />
                             <p className="cursor-pointer text-white w-full">Delete</p>
                         </DropdownMenuItem>

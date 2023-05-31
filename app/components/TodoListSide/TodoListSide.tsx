@@ -5,13 +5,13 @@ import TodoCard from "./TodoCard"
 import { useSearchParams } from 'next/navigation'
 import { fetcher } from "@/app/utils/fetcher"
 import { Work } from "@prisma/client"
+import { sortByStatus } from "@/app/utils/todo"
 
 export default function TodoListSide() {
     const searchParams = useSearchParams()
     const todoListId = searchParams.get("todolist_id")
     const { data: todoList } = useSWR(`/api/todo/${todoListId}`, fetcher)
-    console.log(todoList);
-
+    const newTodoList = sortByStatus(todoList)
 
     return (
         <div className="col-span-10 bg-[#181820]">
@@ -44,10 +44,12 @@ export default function TodoListSide() {
                             <p className="capitalize">Task list</p>
                             <ul className="mt-4">
                                 {
-                                    todoList?.map((todo: Work) => (
+                                    newTodoList?.map((todo: Work) => (
                                         <TodoCard
                                             key={todo.id}
                                             workName={todo.name}
+                                            todoId={todo.id}
+                                            status={todo.status}
                                         />
                                     ))
                                 }

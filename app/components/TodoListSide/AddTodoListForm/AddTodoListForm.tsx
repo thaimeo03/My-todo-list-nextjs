@@ -10,6 +10,7 @@ import {
 } from "../../ui/dialog"
 import { useState } from "react"
 import { mutate } from "swr"
+import { useToast } from "../../ui/use-toast"
 
 interface Props {
     todoListId: string
@@ -17,8 +18,9 @@ interface Props {
 
 export default function AddTodoListForm({ todoListId }: Props) {
     const [disable, setDisable] = useState(true)
-    const [date, setDate] = useState<Date | undefined>(new Date())
+    const [date, setDate] = useState<Date | undefined>(undefined)
     const [name, setName] = useState<string>("");
+    const { toast } = useToast()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
@@ -35,6 +37,9 @@ export default function AddTodoListForm({ todoListId }: Props) {
                 name
             })
             setName("")
+            toast({
+                title: "Created Successfully",
+            })
             mutate(`/api/todo/${todoListId}`)
         } catch (error: any) {
             console.log(error.message);
@@ -63,7 +68,7 @@ export default function AddTodoListForm({ todoListId }: Props) {
                 />
             </div>
             <DialogContent className="bg-[#181820]">
-                <DialogHeader className="text-white">
+                <DialogHeader className="text-white flex flex-col items-center">
                     <DialogTitle className="text-[#fc76a1] text-2xl">
                         Add your deadline (optional)
                     </DialogTitle>

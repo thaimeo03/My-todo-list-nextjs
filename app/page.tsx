@@ -6,6 +6,7 @@ import useProtectedClient from "./hooks/useProtectedClient"
 import useSWR from "swr"
 import { fetcher } from "./utils/fetcher"
 import { UserType } from "./types/user"
+import { Toaster } from "./components/ui/toaster"
 
 export default function Home() {
     useProtectedClient()
@@ -18,6 +19,7 @@ export default function Home() {
                 <NavBar userId={user?.id as string} />
                 <TodoListSide />
             </main>
+            <Toaster />
         </div>
     )
 }

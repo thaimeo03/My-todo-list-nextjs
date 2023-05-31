@@ -50,6 +50,24 @@ export async function POST(req: Request, {params} : {params: {id: string}}) {
       }
 }
 
-// export async function DELETE() {
+export async function DELETE(req: Request, {params} : {params: {id: string}}) {
+    if(req.method !== "DELETE") {
+        return new Response("Endpoint unknown", {status: 405})
+    }
 
-// }
+    try {
+        const todo = await prisma.work.delete({
+            where: {
+                id: params.id
+            }
+        })
+    
+        if(!todo) {
+            return new Response("Todo list not found", {status: 404})
+        }
+    
+        return new Response(JSON.stringify(todo))
+    } catch (error) {
+        return new Response("Internal Server Error", {status: 500})
+    }
+}

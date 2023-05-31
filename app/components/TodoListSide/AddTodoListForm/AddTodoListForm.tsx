@@ -1,28 +1,44 @@
 "use client"
+import axios from "axios"
 import { Calendar } from "../../ui/calendar"
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "../../ui/dialog"
 import { useState } from "react"
+import { mutate } from "swr"
 
-export default function AddTodoListForm() {
+interface Props {
+    todoListId: string
+}
+
+export default function AddTodoListForm({ todoListId }: Props) {
     const [disable, setDisable] = useState(true)
     const [date, setDate] = useState<Date | undefined>(new Date())
+    const [name, setName] = useState<string>("");
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setName(e.target.value)
         if (e.target.value.trim().length !== 0) {
-            setDisable(false)
+            return setDisable(false)
         }
-        else setDisable(true)
+        else return setDisable(true)
     }
 
-    const handleAddTodo = () => {
-        console.log(date?.toISOString());
+    const handleAddTodo = async () => {
+        try {
+            const todo = await axios.post(`/api/todo/${todoListId}`, {
+                finishDate: date?.toISOString(),
+                name
+            })
+            setName("")
+            mutate(`/api/todo/${todoListId}`)
+        } catch (error: any) {
+            console.log(error.message);
+        }
     }
 
     return (
@@ -41,6 +57,7 @@ export default function AddTodoListForm() {
                     type="text"
                     className="ml-3 text-white placeholder:opacity-60 text-sm w-full outline-none bg-transparent focus:placeholder:opacity-0 transition"
                     placeholder="Add a task"
+                    value={name}
                     name="work"
                     onChange={handleChange}
                 />
@@ -50,7 +67,7 @@ export default function AddTodoListForm() {
                     <DialogTitle className="text-[#fc76a1] text-2xl">
                         Add your deadline (optional)
                     </DialogTitle>
-                    <DialogDescription className="text-white">
+                    <div className="text-white">
                         <Calendar
                             mode="single"
                             selected={date}
@@ -58,7 +75,7 @@ export default function AddTodoListForm() {
                             className="rounded-md border w-fit mt-3"
                         />
                         <button type="button" className="px-3 py-1 border border-[#fc76a1] rounded hover:bg-[#fc76a1] transition mt-3" onClick={handleAddTodo}>Create</button>
-                    </DialogDescription>
+                    </div>
                 </DialogHeader>
             </DialogContent>
         </Dialog>

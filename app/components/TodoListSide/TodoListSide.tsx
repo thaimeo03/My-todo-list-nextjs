@@ -1,16 +1,22 @@
 "use client"
+import useSWR from "swr"
 import AddTodoListForm from "./AddTodoListForm"
 import TodoCard from "./TodoCard"
 import { useSearchParams } from 'next/navigation'
+import { fetcher } from "@/app/utils/fetcher"
+import { Work } from "@prisma/client"
 
 export default function TodoListSide() {
     const searchParams = useSearchParams()
     const todoListId = searchParams.get("todolist_id")
+    const { data: todoList } = useSWR(`/api/todo/${todoListId}`, fetcher)
+    console.log(todoList);
+
 
     return (
         <div className="col-span-10 bg-[#181820]">
             {
-                todoListId && (
+                (todoListId && todoList) && (
                     <div className="w-[60%] mx-auto mt-10 text-white">
                         <div className="flex justify-between items-center">
                             <p className="text-xl font-bold"></p>
@@ -32,17 +38,19 @@ export default function TodoListSide() {
                             </div>
                         </div>
 
-                        <AddTodoListForm />
+                        <AddTodoListForm todoListId={todoListId} />
 
                         <div className="mt-9">
                             <p className="capitalize">Task list</p>
                             <ul className="mt-4">
-                                <TodoCard
-                                    workName="Lorem ipsum dolor sit, amet consectetur adipisicing elit"
-                                />
-                                <TodoCard
-                                    workName="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fugit ea illo eligendi inventore dolor enim nihil obcaecati culpa impedit id voluptate error neque fugiat perspiciatis doloribus, perferendis saepe vel recusandae"
-                                />
+                                {
+                                    todoList?.map((todo: Work) => (
+                                        <TodoCard
+                                            key={todo.id}
+                                            workName={todo.name}
+                                        />
+                                    ))
+                                }
                             </ul>
                         </div>
                     </div>

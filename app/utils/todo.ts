@@ -12,6 +12,8 @@ export function sortByStatus(todoList: any) {
 }
 
 export function deadline(finishDate: Date | null) {
+    if(finishDate === null) return null
+
     const currentDate = new Date();
     const completionDate = new Date(finishDate as Date);    
 

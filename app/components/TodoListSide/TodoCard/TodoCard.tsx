@@ -38,6 +38,8 @@ export default function TodoCard({ workName, todoId, status, finishDate }: Props
     const [date, setDate] = useState<Date | undefined>(undefined)
     const nameRef = useRef<HTMLParagraphElement>(null)
 
+    const deadlineTodo = deadline(finishDate as Date)
+
     const handleToggle = useCallback(async () => {
         setIsChecked(!isChecked)
         try {
@@ -75,7 +77,10 @@ export default function TodoCard({ workName, todoId, status, finishDate }: Props
 
     return (
         <div className={`mt-4 ${isHidden ? "hidden" : ""}`}>
-            <span className="text-xs text-blue-500">{deadline(finishDate as Date) > 0 ? `Your deadline is ${deadline(finishDate as Date)} days away` : "Expired"}</span>
+            <span className="text-xs text-blue-500">
+                {(deadlineTodo !== null && isChecked === false) && (deadlineTodo >= 0 ? `Your deadline is ${deadlineTodo} day${deadlineTodo > 1 ? "s" : ""} away` : "Expired")}
+                {isChecked && "Completed"}
+            </span>
             <li className={`p-3 ${isChecked ? "bg-[#4821d4]" : "bg-[#21212b] "} rounded-xl w-full flex justify-between`}>
                 <div className="flex space-x-3">
                     <div>
